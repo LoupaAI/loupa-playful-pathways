@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <link rel="icon" href="https://app.loupa.ai/loupa-favicon.png" type="image/png">
+    <link rel="icon" href="https://app.loupa.ai/loupa-favicon.png">
+    
     <link rel="apple-touch-icon" href="https://app.loupa.ai/loupa-favicon.png">
     <meta property="og:type" content="website">
     <meta property="og:image" content="https://app.loupa.ai/loupa-favicon.png">
@@ -125,89 +126,7 @@ h1,h2,h3,h4,h5,h6 {  }
 .faq-item.active .faq-answer, .faq-item.active .accordion-answer { max-height: 1200px; }
 .accordion-chevron, .faq-plus, .faq1-chev, .faq3-icon, .faq4-q-icon, .faq5-chev { transition: transform .25s ease; }
 </style>
-<style data-loupa-safety>section,[data-loupa-section-id]{overflow-x:clip !important;}section[class*="featured-product"],section[id*="featured-product"],section[class*="product-detail"],section[id*="product-detail"],section[class*="product-hero"],section[id*="product-hero"],[data-loupa-section-id*="featured-product"],[data-loupa-section-id*="product-detail"],[data-loupa-section-id*="product-hero"]{padding:4rem 1.5rem !important;width:100% !important;box-sizing:border-box !important;}section[class*="featured-product"] > *,section[id*="featured-product"] > *,section[class*="product-detail"] > *,section[id*="product-detail"] > *,section[class*="product-hero"] > *,section[id*="product-hero"] > *,[data-loupa-section-id*="featured-product"] > *,[data-loupa-section-id*="product-detail"] > *,[data-loupa-section-id*="product-hero"] > *{max-width:1200px !important;margin-left:auto !important;margin-right:auto !important;width:100% !important;box-sizing:border-box !important;}[class*="featured-product"] .grid,[id*="featured-product"] .grid,[class*="featured-product"] [class*="grid-cols-2"],[id*="featured-product"] [class*="grid-cols-2"],[class*="product-detail"] .grid,[id*="product-detail"] .grid,[class*="product-detail"] [class*="grid-cols-2"],[id*="product-detail"] [class*="grid-cols-2"],[class*="product-hero"] .grid,[id*="product-hero"] .grid,[class*="product-hero"] [class*="grid-cols-2"],[id*="product-hero"] [class*="grid-cols-2"]{grid-template-columns:minmax(0,1fr) minmax(0,1fr) !important;align-items:start !important;gap:2rem !important;}[class*="featured-product"] .grid > *,[id*="featured-product"] .grid > *,[class*="product-detail"] .grid > *,[id*="product-detail"] .grid > *,[class*="product-hero"] .grid > *,[id*="product-hero"] .grid > *{min-width:0 !important;max-width:100% !important;overflow:hidden !important;}[class*="featured-product"] img,[id*="featured-product"] img,[class*="product-detail"] img,[id*="product-detail"] img,[class*="product-hero"] img,[id*="product-hero"] img{max-width:100% !important;width:100% !important;height:auto !important;aspect-ratio:1/1 !important;object-fit:contain !important;object-position:center !important;display:block !important;position:static !important;}[class*="featured-product"] [class*="thumb"],[id*="featured-product"] [class*="thumb"],[class*="product-detail"] [class*="thumb"],[id*="product-detail"] [class*="thumb"],[class*="product-hero"] [class*="thumb"],[id*="product-hero"] [class*="thumb"]{max-width:96px !important;flex-shrink:0 !important;}[class*="featured-product"] [class*="thumb"] img,[id*="featured-product"] [class*="thumb"] img,[class*="product-detail"] [class*="thumb"] img,[id*="product-detail"] [class*="thumb"] img,[class*="product-hero"] [class*="thumb"] img,[id*="product-hero"] [class*="thumb"] img{width:100% !important;height:auto !important;aspect-ratio:1/1 !important;object-fit:contain !important;object-position:center !important;}[class*="featured-product"] [class*="absolute"],[class*="product-detail"] [class*="absolute"],[class*="product-hero"] [class*="absolute"]{position:relative !important;inset:auto !important;transform:none !important;}@media (max-width:767px){section[class*="featured-product"],section[id*="featured-product"],section[class*="product-detail"],section[id*="product-detail"],section[class*="product-hero"],section[id*="product-hero"]{padding:2.5rem 1rem !important;}[class*="featured-product"] .grid,[id*="featured-product"] .grid,[class*="featured-product"] [class*="grid-cols-2"],[id*="featured-product"] [class*="grid-cols-2"],[class*="product-detail"] .grid,[id*="product-detail"] .grid,[class*="product-detail"] [class*="grid-cols-2"],[id*="product-detail"] [class*="grid-cols-2"],[class*="product-hero"] .grid,[id*="product-hero"] .grid,[class*="product-hero"] [class*="grid-cols-2"],[id*="product-hero"] [class*="grid-cols-2"]{grid-template-columns:minmax(0,1fr) !important;}}</style><style data-loupa-featured-clamp>
-/* Global safety: images can never exceed their container. */
-img, svg, video { max-width: 100%; height: auto; }
-/* Featured-product / product-gallery sections: force strict column containment. */
-section[id*="featured-product" i], section[class*="featured-product" i],
-section[id*="product-showcase" i], section[class*="product-showcase" i],
-section[id*="product-gallery" i], section[class*="product-gallery" i],
-[data-loupa-section-key*="featured-product" i],
-[data-loupa-section-id*="featured-product" i] {
-  overflow: hidden;
-}
-section[id*="featured-product" i] *, section[class*="featured-product" i] *,
-section[id*="product-showcase" i] *, section[class*="product-showcase" i] *,
-section[id*="product-gallery" i] *, section[class*="product-gallery" i] *,
-[data-loupa-section-key*="featured-product" i] *,
-[data-loupa-section-id*="featured-product" i] * {
-  min-width: 0;
-  max-width: 100%;
-  box-sizing: border-box;
-}
-section[id*="featured-product" i] img:not([data-loupa-avatar]), section[class*="featured-product" i] img:not([data-loupa-avatar]),
-section[id*="product-showcase" i] img:not([data-loupa-avatar]), section[class*="product-showcase" i] img:not([data-loupa-avatar]),
-section[id*="product-gallery" i] img:not([data-loupa-avatar]), section[class*="product-gallery" i] img:not([data-loupa-avatar]),
-[data-loupa-section-key*="featured-product" i] img:not([data-loupa-avatar]),
-[data-loupa-section-id*="featured-product" i] img:not([data-loupa-avatar]) {
-  width: 100% !important;
-  max-width: 100% !important;
-  height: auto !important;
-  object-fit: contain;
-  position: static !important;
-  transform: none !important;
-  margin-left: 0 !important;
-  margin-right: 0 !important;
-}
-/* Small avatars (testimonial portraits, author photos) must stay small squares
-   on every breakpoint — they are explicitly excluded from the clamp above. */
-img[data-loupa-avatar] {
-  width: 56px !important;
-  height: 56px !important;
-  min-width: 56px !important;
-  max-width: 56px !important;
-  flex: 0 0 auto !important;
-  object-fit: cover !important;
-  align-self: flex-start !important;
-  display: block !important;
-}
-@media (min-width: 768px) {
-  img[data-loupa-avatar] {
-    width: 64px !important;
-    height: 64px !important;
-    min-width: 64px !important;
-    max-width: 64px !important;
-  }
-}
-/* Testimonial bar stays a compact horizontal row that never exceeds its column. */
-[data-loupa-testimonial-box] {
-  display: flex !important;
-  flex-direction: row !important;
-  align-items: flex-start !important;
-  width: 100% !important;
-  max-width: 100% !important;
-  text-align: left !important;
-}
-[data-loupa-testimonial-box] > *:not(img) { min-width: 0 !important; flex: 1 1 auto !important; }
-/* Main product gallery image is always a perfect 1:1 square. */
-img[data-gallery-main], #product-gallery-main {
-  aspect-ratio: 1 / 1 !important;
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: cover !important;
-}
-/* Its wrapper must be square too, so the image can never letterbox. */
-[data-loupa-gallery-main-wrap] {
-  aspect-ratio: 1 / 1 !important;
-  height: auto !important;
-  overflow: hidden !important;
-}
-/* Gallery thumbnails stay square. */
-[data-gallery-thumb], [data-gallery-thumb] img {
-  aspect-ratio: 1 / 1 !important;
-  object-fit: cover !important;
-}
-</style>
+<style data-loupa-safety>section,[data-loupa-section-id]{overflow-x:clip !important;}section[class*="featured-product"],section[id*="featured-product"],section[class*="product-detail"],section[id*="product-detail"],section[class*="product-hero"],section[id*="product-hero"],[data-loupa-section-id*="featured-product"],[data-loupa-section-id*="product-detail"],[data-loupa-section-id*="product-hero"]{padding:4rem 1.5rem !important;width:100% !important;box-sizing:border-box !important;}section[class*="featured-product"] > *,section[id*="featured-product"] > *,section[class*="product-detail"] > *,section[id*="product-detail"] > *,section[class*="product-hero"] > *,section[id*="product-hero"] > *,[data-loupa-section-id*="featured-product"] > *,[data-loupa-section-id*="product-detail"] > *,[data-loupa-section-id*="product-hero"] > *{max-width:1200px !important;margin-left:auto !important;margin-right:auto !important;width:100% !important;box-sizing:border-box !important;}[class*="featured-product"] .grid,[id*="featured-product"] .grid,[class*="featured-product"] [class*="grid-cols-2"],[id*="featured-product"] [class*="grid-cols-2"],[class*="product-detail"] .grid,[id*="product-detail"] .grid,[class*="product-detail"] [class*="grid-cols-2"],[id*="product-detail"] [class*="grid-cols-2"],[class*="product-hero"] .grid,[id*="product-hero"] .grid,[class*="product-hero"] [class*="grid-cols-2"],[id*="product-hero"] [class*="grid-cols-2"]{grid-template-columns:minmax(0,1fr) minmax(0,1fr) !important;align-items:start !important;gap:2rem !important;}[class*="featured-product"] .grid > *,[id*="featured-product"] .grid > *,[class*="product-detail"] .grid > *,[id*="product-detail"] .grid > *,[class*="product-hero"] .grid > *,[id*="product-hero"] .grid > *{min-width:0 !important;max-width:100% !important;overflow:hidden !important;}[class*="featured-product"] img,[id*="featured-product"] img,[class*="product-detail"] img,[id*="product-detail"] img,[class*="product-hero"] img,[id*="product-hero"] img{max-width:100% !important;width:100% !important;height:auto !important;aspect-ratio:1/1 !important;object-fit:contain !important;object-position:center !important;display:block !important;position:static !important;}[class*="featured-product"] [class*="thumb"],[id*="featured-product"] [class*="thumb"],[class*="product-detail"] [class*="thumb"],[id*="product-detail"] [class*="thumb"],[class*="product-hero"] [class*="thumb"],[id*="product-hero"] [class*="thumb"]{max-width:96px !important;flex-shrink:0 !important;}[class*="featured-product"] [class*="thumb"] img,[id*="featured-product"] [class*="thumb"] img,[class*="product-detail"] [class*="thumb"] img,[id*="product-detail"] [class*="thumb"] img,[class*="product-hero"] [class*="thumb"] img,[id*="product-hero"] [class*="thumb"] img{width:100% !important;height:auto !important;aspect-ratio:1/1 !important;object-fit:contain !important;object-position:center !important;}[class*="featured-product"] [class*="absolute"],[class*="product-detail"] [class*="absolute"],[class*="product-hero"] [class*="absolute"]{position:relative !important;inset:auto !important;transform:none !important;}@media (max-width:767px){section[class*="featured-product"],section[id*="featured-product"],section[class*="product-detail"],section[id*="product-detail"],section[class*="product-hero"],section[id*="product-hero"]{padding:2.5rem 1rem !important;}[class*="featured-product"] .grid,[id*="featured-product"] .grid,[class*="featured-product"] [class*="grid-cols-2"],[id*="featured-product"] [class*="grid-cols-2"],[class*="product-detail"] .grid,[id*="product-detail"] .grid,[class*="product-detail"] [class*="grid-cols-2"],[id*="product-detail"] [class*="grid-cols-2"],[class*="product-hero"] .grid,[id*="product-hero"] .grid,[class*="product-hero"] [class*="grid-cols-2"],[id*="product-hero"] [class*="grid-cols-2"]{grid-template-columns:minmax(0,1fr) !important;}}</style>
 <style data-loupa-page-background>html,body{background:#FFFFFF !important;}</style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -226,7 +145,7 @@ h1 *, h2 *, h3 *, h4 *, h5 *, h6 *,
 i, .fa, [class^="fa-"], [class*=" fa-"], [class*="icon" i] { font-family: inherit; }
 </style>
 </head>
-<body><div data-loupa-dark="1" data-loupa-announcement-bar style="width:100%;background:#94564B;color:#ffffff;padding:10px 20px;text-align:center;font-size:13px;font-weight:500;letter-spacing:0.04em;box-sizing:border-box;">Sofortige digitale Lieferung  •  Sicherer Bezahlvorgang  •  Weltweit vertraut</div><header data-loupa-dark="1" data-loupa-brand-header style="width:100%;background:#94564B;padding:18px 32px;display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:24px;box-sizing:border-box;flex-wrap:wrap;"><style data-loupa-brand-header-style>@media (max-width:768px){[data-loupa-brand-header]{flex-direction:column !important;align-items:center !important;padding:16px 20px !important;gap:12px !important;}[data-loupa-brand-header] > div{display:flex !important;flex-direction:column !important;align-items:center !important;justify-content:center !important;gap:12px !important;flex:0 0 auto !important;width:100% !important;min-width:0 !important;}[data-loupa-brand-header] > div > img{max-width:200px !important;max-height:48px !important;}[data-loupa-brand-header] > div > nav{width:100% !important;justify-content:center !important;gap:18px !important;flex-wrap:wrap !important;}[data-loupa-brand-header] > a{display:none !important;}}</style><div style="display:flex;align-items:center;gap:28px;flex:1 1 auto;min-width:0;flex-wrap:wrap;"><img data-loupa-brand-logo src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA5MDAgNjQiIHdpZHRoPSI5MDAiIGhlaWdodD0iNjQiPjx0ZXh0IHg9IjQ1MCIgeT0iNDQiIGZvbnQtZmFtaWx5PSJBcmlhbCwgSGVsdmV0aWNhLCBzYW5zLXNlcmlmIiBmb250LXdlaWdodD0iNDAwIiBmb250LXNpemU9IjM0IiBmaWxsPSIjMTAxMDEwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5QbGF5ZnVsIFBhdGh3YXlzOiBEaWUgMjEtVGFnZSBGYW1pbGllbi1BYmVudGV1ZXItTWVkaXRhdGlvbnMtQ2hhbGxlbmdlPC90ZXh0Pjwvc3ZnPg==" alt="Playful Pathways: Die 21-Tage Familien-Abenteuer-Meditations-Challenge" style="max-height:56px;max-width:220px;width:auto;height:auto;object-fit:contain;display:block;flex-shrink:0;" /><nav data-loupa-brand-nav style="display:flex;flex-wrap:wrap;align-items:center;gap:24px;"><a data-loupa-page-link href="/" style="font-size:14px;font-weight:400;color:#101010;text-decoration:none;letter-spacing:0.02em;cursor:pointer;display:inline-block;">Startseite</a><a data-loupa-page-link href="/product-gentle-parenting/" style="font-size:14px;font-weight:400;color:#101010;text-decoration:none;letter-spacing:0.02em;cursor:pointer;display:inline-block;font-weight:600;">gentle parenting</a></nav></div><a data-loupa-dark="1" data-loupa-brand-cta href="https://example.com/checkout" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;justify-content:center;background:#94564B;color:#ffffff;text-decoration:none;font-size:14px;font-weight:500;padding:0 20px;height:44px;border-radius:8px;letter-spacing:0.02em;white-space:nowrap;">Jetzt sichern</a></header>
+<body><div data-loupa-dark="1" data-loupa-announcement-bar style="width:100%;background:#94564B;color:#ffffff;padding:10px 20px;text-align:center;font-size:13px;font-weight:500;letter-spacing:0.04em;box-sizing:border-box;">Sofortige digitale Lieferung  •  Sicherer Bezahlvorgang  •  Weltweit vertraut</div><header data-loupa-dark="1" data-loupa-brand-header="" style="width:100%;background:#94564B;padding:18px 32px;display:flex;flex-direction:row;align-items:center;justify-content:space-between;gap:24px;box-sizing:border-box;flex-wrap:wrap;"><style data-loupa-brand-header-style="">@media (max-width:768px){[data-loupa-brand-header]{flex-direction:column !important;align-items:center !important;padding:16px 20px !important;gap:12px !important;}[data-loupa-brand-header] > div{display:flex !important;flex-direction:column !important;align-items:center !important;justify-content:center !important;gap:12px !important;flex:0 0 auto !important;width:100% !important;min-width:0 !important;}[data-loupa-brand-header] > div > img{max-width:200px !important;max-height:48px !important;}[data-loupa-brand-header] > div > nav{width:100% !important;justify-content:center !important;gap:18px !important;flex-wrap:wrap !important;}[data-loupa-brand-header] > a{display:none !important;}}</style><div style="display:flex;align-items:center;gap:28px;flex:1 1 auto;min-width:0;flex-wrap:wrap;"><img data-loupa-brand-logo="" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA5MDAgNjQiIHdpZHRoPSI5MDAiIGhlaWdodD0iNjQiPjx0ZXh0IHg9IjQ1MCIgeT0iNDQiIGZvbnQtZmFtaWx5PSJBcmlhbCwgSGVsdmV0aWNhLCBzYW5zLXNlcmlmIiBmb250LXdlaWdodD0iNDAwIiBmb250LXNpemU9IjM0IiBmaWxsPSIjMTAxMDEwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5QbGF5ZnVsIFBhdGh3YXlzOiBEaWUgMjEtVGFnZSBGYW1pbGllbi1BYmVudGV1ZXItQ2hhbGxlbmdlPC90ZXh0Pjwvc3ZnPg==" alt="Playful Pathways: Die 21-Tage Familien-Abenteuer-Challenge" style="max-height: 56px; max-width: 220px; width: auto; height: auto; object-fit: contain; display: block; flex-shrink: 0;"><nav data-loupa-brand-nav="" style="display:flex;flex-wrap:wrap;align-items:center;gap:24px;"><a data-loupa-page-link href="/" style="font-family:Arial,Helvetica,sans-serif;font-size:14px;font-weight:400;color:#101010;text-decoration:none;letter-spacing:0.02em;cursor:pointer;display:inline-block;">Startseite</a><a data-loupa-page-link href="/product-gentle-parenting/" style="font-family:Arial,Helvetica,sans-serif;font-size:14px;font-weight:400;color:#101010;text-decoration:none;letter-spacing:0.02em;cursor:pointer;display:inline-block;font-weight:600;">21-Tage Familien Abenteuer</a></nav></div><a data-loupa-dark="1" data-loupa-brand-cta="" href="https://example.com/checkout" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;justify-content:center;background:#94564B;color:#ffffff;text-decoration:none;font-size:14px;font-weight:500;padding:0 20px;height:44px;border-radius:8px;letter-spacing:0.02em;white-space:nowrap;">Jetzt sichern</a></header>
 <!-- section:featured-product_p1 component:featured-product-5 -->
 <section style="background: rgb(255, 255, 255); position: relative;" data-loupa-section-key="featured-product_3 featured-product featured-product-5">
   <div class="max-w-7xl mx-auto px-4 py-8 lg:px-12 lg:py-12">
