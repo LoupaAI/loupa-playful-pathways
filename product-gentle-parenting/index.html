@@ -45,6 +45,7 @@
     
     
     
+    
     <link rel="apple-touch-icon" href="https://app.loupa.ai/loupa-favicon.png">
     <meta property="og:type" content="website">
     <meta property="og:image" content="https://app.loupa.ai/loupa-favicon.png">
@@ -1028,6 +1029,7 @@ svg text, svg textPath { fill: #000000 !important; color: #000000 !important; }
 [data-loupa-light] [data-loupa-dark] svg text, [data-loupa-light] [data-loupa-dark] svg textPath { fill: #F5F0E8 !important; }
 </style>
 
+
 <!-- LOUPA_ANALYTICS_START -->
 <script data-loupa-analytics>
 (function(){
@@ -1062,13 +1064,12 @@ svg text, svg textPath { fill: #000000 !important; color: #000000 !important; }
       };
       if (extra) for (var k in extra) payload[k] = extra[k];
       var body = JSON.stringify(payload);
+      // text/plain keeps this a "simple" request: no CORS preflight, which
+      // browsers otherwise block for sendBeacon (credentials + wildcard origin).
       try {
-        if (navigator.sendBeacon) {
-          navigator.sendBeacon(URL_, new Blob([body], { type: 'application/json' }));
-          return;
-        }
+        if (navigator.sendBeacon && navigator.sendBeacon(URL_, new Blob([body], { type: 'text/plain;charset=UTF-8' }))) return;
       } catch (e) {}
-      try { fetch(URL_, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: body, keepalive: true }); } catch (e) {}
+      try { fetch(URL_, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=UTF-8' }, body: body, keepalive: true }); } catch (e) {}
     }
 
     send('page_view');
