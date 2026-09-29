@@ -46,6 +46,7 @@
     
     
     
+    
     <link rel="apple-touch-icon" href="https://app.loupa.ai/loupa-favicon.png">
     <meta property="og:type" content="website">
     <meta property="og:image" content="https://app.loupa.ai/loupa-favicon.png">
@@ -1030,6 +1031,7 @@ svg text, svg textPath { fill: #000000 !important; color: #000000 !important; }
 </style>
 
 
+
 <!-- LOUPA_ANALYTICS_START -->
 <script data-loupa-analytics>
 (function(){
@@ -1099,4 +1101,166 @@ svg text, svg textPath { fill: #000000 !important; color: #000000 !important; }
 })();
 </script>
 <!-- LOUPA_ANALYTICS_END -->
+<!-- LOUPA_CART_START -->
+<script data-loupa-cart>
+(function(){
+  try {
+    var SITE = "42d5acc6-6e62-498e-b9b4-d1d016f77ce2";
+    var URL_ = "https://nyrslifytgbluamxpqzq.supabase.co/functions/v1/store-cart";
+    var KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im55cnNsaWZ5dGdibHVhbXhwcXpxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTEyNzMyMDcsImV4cCI6MjA2Njg0OTIwN30.5sG-zDILH6LXK7VTk-ixbSLXJAiEWi7IdeykLhvajoI";
+    var DEFAULT_PRODUCT = "c5ca7db9-bee7-4173-b080-210dee2246c9";
+    var CART_KEY = 'loupa_cart_' + SITE;
+    var state = { items: [], total_cents: 0, subtotal_cents: 0, discount_cents: 0, currency: 'USD' };
+    var busy = false;
+
+    function cartId(){ try { return localStorage.getItem(CART_KEY) || ''; } catch (e) { return ''; } }
+    function setCartId(v){ try { if (v) localStorage.setItem(CART_KEY, v); } catch (e) {} }
+    function visitorId(){ try { return localStorage.getItem('loupa_vid') || ''; } catch (e) { return ''; } }
+
+    function money(cents, cur){
+      var v = (cents / 100).toFixed(2);
+      var symbol = cur === 'EUR' ? '\u20ac' : cur === 'GBP' ? '\u00a3' : cur === 'USD' ? '$' : '';
+      return symbol ? symbol + v : v + ' ' + cur;
+    }
+
+    function api(payload, cb){
+      payload.website_id = SITE;
+      payload.cart_id = cartId();
+      payload.visitor_id = visitorId();
+      fetch(URL_, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', apikey: KEY, Authorization: 'Bearer ' + KEY },
+        body: JSON.stringify(payload)
+      }).then(function(r){ return r.json(); }).then(function(d){ cb && cb(d); })
+        .catch(function(){ cb && cb({ success: false }); });
+    }
+
+    // ---------- drawer ----------
+    var root, listEl, totalEl, payBtn, noteEl;
+    function build(){
+      root = document.createElement('div');
+      root.setAttribute('data-loupa-cart-root','');
+      root.innerHTML = [
+        '<div data-lc-backdrop style="position:fixed;inset:0;background:rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:opacity .18s;z-index:2147483000"></div>',
+        '<aside data-lc-panel style="position:fixed;top:0;right:0;height:100%;width:380px;max-width:92vw;background:#fff;color:#121212;transform:translateX(100%);transition:transform .22s;z-index:2147483001;display:flex;flex-direction:column;font-family:Inter,system-ui,sans-serif;box-shadow:-8px 0 40px rgba(0,0,0,.12)">',
+        '<div style="display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid #EFEFEF">',
+        '<span style="font-size:15px;font-weight:600">Your cart</span>',
+        '<button data-lc-close aria-label="Close" style="border:0;background:none;font-size:20px;line-height:1;cursor:pointer;color:#6B6B6B">&times;</button>',
+        '</div>',
+        '<div data-lc-list style="flex:1;overflow:auto;padding:12px 20px"></div>',
+        '<div style="padding:16px 20px;border-top:1px solid #EFEFEF">',
+        '<div style="display:flex;justify-content:space-between;font-size:14px;font-weight:600;margin-bottom:12px"><span>Total</span><span data-lc-total>-</span></div>',
+        '<button data-lc-pay style="width:100%;border:0;border-radius:10px;background:#282828;color:#fff;padding:13px 16px;font-size:14px;font-weight:600;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,.18)">Checkout</button>',
+        '<p data-lc-note style="margin:10px 0 0;font-size:12px;color:#6B6B6B;text-align:center"></p>',
+        '</div></aside>'
+      ].join('');
+      document.body.appendChild(root);
+      listEl = root.querySelector('[data-lc-list]');
+      totalEl = root.querySelector('[data-lc-total]');
+      payBtn = root.querySelector('[data-lc-pay]');
+      noteEl = root.querySelector('[data-lc-note]');
+      root.querySelector('[data-lc-close]').addEventListener('click', close);
+      root.querySelector('[data-lc-backdrop]').addEventListener('click', close);
+      payBtn.addEventListener('click', checkout);
+    }
+
+    function open(){
+      if (!root) build();
+      var b = root.querySelector('[data-lc-backdrop]');
+      b.style.opacity = '1'; b.style.pointerEvents = 'auto';
+      root.querySelector('[data-lc-panel]').style.transform = 'translateX(0)';
+    }
+    function close(){
+      if (!root) return;
+      var b = root.querySelector('[data-lc-backdrop]');
+      b.style.opacity = '0'; b.style.pointerEvents = 'none';
+      root.querySelector('[data-lc-panel]').style.transform = 'translateX(100%)';
+    }
+
+    function render(){
+      if (!root) build();
+      var items = state.items || [];
+      if (!items.length) {
+        listEl.innerHTML = '<p style="font-size:13px;color:#6B6B6B;padding:24px 0;text-align:center">Your cart is empty.</p>';
+      } else {
+        listEl.innerHTML = items.map(function(i){
+          var price = i.is_freebie ? 'Free' : money(i.line_total_cents, state.currency);
+          var was = (!i.is_freebie && i.base_price_cents > i.unit_price_cents)
+            ? '<span style="margin-left:6px;color:#9A9A9A;text-decoration:line-through">' + money(i.base_price_cents * i.quantity, state.currency) + '</span>' : '';
+          var tag = i.role === 'upsell' ? '#E0913A' : i.role === 'freebie' ? '#9B6BE0' : '#4F6BED';
+          var remove = i.is_freebie ? '' : '<button data-lc-remove="' + i.product_id + '" style="border:0;background:none;color:#9A9A9A;font-size:12px;cursor:pointer;padding:0">Remove</button>';
+          return '<div style="display:flex;gap:12px;justify-content:space-between;padding:12px 0;border-bottom:1px solid #F4F4F4">'
+            + '<div style="min-width:0"><p style="margin:0;font-size:13px;font-weight:500">' + i.title + '</p>'
+            + '<p style="margin:4px 0 0;font-size:11px;color:#6B6B6B;display:flex;align-items:center;gap:6px">'
+            + '<span style="width:6px;height:6px;border-radius:2px;background:' + tag + ';display:inline-block"></span>'
+            + (i.role === 'freebie' ? 'Free bonus' : i.role === 'upsell' ? 'Add-on' : 'Main product') + '</p>'
+            + '<div style="margin-top:6px">' + remove + '</div></div>'
+            + '<div style="font-size:13px;white-space:nowrap">' + price + was + '</div></div>';
+        }).join('');
+        Array.prototype.forEach.call(listEl.querySelectorAll('[data-lc-remove]'), function(btn){
+          btn.addEventListener('click', function(){ remove(btn.getAttribute('data-lc-remove')); });
+        });
+      }
+      totalEl.textContent = money(state.total_cents || 0, state.currency);
+      payBtn.disabled = busy || !items.length;
+      payBtn.style.opacity = payBtn.disabled ? '.5' : '1';
+    }
+
+    function apply(d){
+      if (d && d.success && d.cart) {
+        if (d.cart.cart_id) setCartId(d.cart.cart_id);
+        state = d.cart;
+        if (noteEl) noteEl.textContent = d.cart.issue === 'no_main_product' ? 'Add a main product to check out.' : '';
+      }
+      render();
+    }
+
+    function add(productId){
+      if (!productId) return;
+      busy = true; open(); render();
+      api({ action: 'add', product_id: productId }, function(d){
+        busy = false;
+        if (d && d.cart_id) setCartId(d.cart_id);
+        apply(d);
+      });
+    }
+    function remove(productId){
+      busy = true; render();
+      api({ action: 'remove', product_id: productId }, function(d){ busy = false; apply(d); });
+    }
+    function refresh(){ if (cartId()) api({ action: 'get' }, apply); }
+
+    function checkout(){
+      if (busy) return;
+      busy = true; render();
+      if (noteEl) noteEl.textContent = 'Opening secure checkout\u2026';
+      api({ action: 'checkout' }, function(d){
+        busy = false;
+        if (d && d.success && d.checkout_url) { window.location.href = d.checkout_url; return; }
+        if (noteEl) noteEl.textContent = (d && d.error) || 'Checkout is unavailable right now.';
+        render();
+      });
+    }
+
+    var CART_RE = /(add to cart|add to bag|buy now|get instant access|get access|order now|checkout|jetzt kaufen|in den warenkorb)/i;
+
+    document.addEventListener('click', function(ev){
+      var el = ev.target && ev.target.closest ? ev.target.closest('a,button,[data-loupa-product],[data-loupa-cart-open]') : null;
+      if (!el) return;
+      if (el.hasAttribute('data-loupa-cart-open')) { ev.preventDefault(); open(); refresh(); return; }
+      var product = el.getAttribute('data-loupa-product');
+      var label = (el.textContent || '').trim();
+      if (!product && !CART_RE.test(label)) return;
+      if (!product) product = DEFAULT_PRODUCT;
+      if (!product) return;
+      ev.preventDefault();
+      add(product);
+    }, true);
+
+    window.LoupaCart = { open: function(){ open(); refresh(); }, add: add, remove: remove, checkout: checkout, refresh: refresh };
+    refresh();
+  } catch (e) {}
+})();
+</script>
+<!-- LOUPA_CART_END -->
 </body></html>
