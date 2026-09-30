@@ -47,6 +47,7 @@
     
     
     
+    
     <link rel="apple-touch-icon" href="https://app.loupa.ai/loupa-favicon.png">
     <meta property="og:type" content="website">
     <meta property="og:image" content="https://app.loupa.ai/loupa-favicon.png">
@@ -1032,6 +1033,8 @@ svg text, svg textPath { fill: #000000 !important; color: #000000 !important; }
 
 
 
+
+
 <!-- LOUPA_ANALYTICS_START -->
 <script data-loupa-analytics>
 (function(){
@@ -1150,7 +1153,7 @@ svg text, svg textPath { fill: #000000 !important; color: #000000 !important; }
         '<div data-lc-list style="flex:1;overflow:auto;padding:12px 20px"></div>',
         '<div style="padding:16px 20px;border-top:1px solid #EFEFEF">',
         '<div style="display:flex;justify-content:space-between;font-size:14px;font-weight:600;margin-bottom:12px"><span>Total</span><span data-lc-total>-</span></div>',
-        '<button data-lc-pay style="width:100%;border:0;border-radius:10px;background:#282828;color:#fff;padding:13px 16px;font-size:14px;font-weight:600;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,.18)">Checkout</button>',
+        '<button data-lc-pay style="width:100%;border:0;border-radius:10px;background:#282828 !important;color:#fff !important;padding:13px 16px;font-size:14px;font-weight:600;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,.18)">Checkout</button>',
         '<p data-lc-note style="margin:10px 0 0;font-size:12px;color:#6B6B6B;text-align:center"></p>',
         '</div></aside>'
       ].join('');
@@ -1181,7 +1184,7 @@ svg text, svg textPath { fill: #000000 !important; color: #000000 !important; }
       if (!root) build();
       var items = state.items || [];
       if (!items.length) {
-        listEl.innerHTML = '<p style="font-size:13px;color:#6B6B6B;padding:24px 0;text-align:center">Your cart is empty.</p>';
+        listEl.innerHTML = '<p style="font-size:13px;color:#6B6B6B;padding:24px 0;text-align:center">' + (busy ? 'Adding to cart\u2026' : 'Your cart is empty.') + '</p>';
       } else {
         listEl.innerHTML = items.map(function(i){
           var price = i.is_freebie ? 'Free' : money(i.line_total_cents, state.currency);
@@ -1242,7 +1245,8 @@ svg text, svg textPath { fill: #000000 !important; color: #000000 !important; }
       });
     }
 
-    var CART_RE = /(add to cart|add to bag|buy now|get instant access|get access|order now|checkout|jetzt kaufen|in den warenkorb)/i;
+    var CART_RE = /(add to cart|add to bag|buy now|get instant access|get access|order now|checkout|jetzt kaufen|jetzt sichern|kaufen|in den warenkorb)/i;
+    var CHECKOUT_HREF_RE = /(\/checkout|whop\.com)/i;
 
     document.addEventListener('click', function(ev){
       var el = ev.target && ev.target.closest ? ev.target.closest('a,button,[data-loupa-product],[data-loupa-cart-open]') : null;
@@ -1250,7 +1254,8 @@ svg text, svg textPath { fill: #000000 !important; color: #000000 !important; }
       if (el.hasAttribute('data-loupa-cart-open')) { ev.preventDefault(); open(); refresh(); return; }
       var product = el.getAttribute('data-loupa-product');
       var label = (el.textContent || '').trim();
-      if (!product && !CART_RE.test(label)) return;
+      var href = el.getAttribute('href') || '';
+      if (!product && !CART_RE.test(label) && !CHECKOUT_HREF_RE.test(href)) return;
       if (!product) product = DEFAULT_PRODUCT;
       if (!product) return;
       ev.preventDefault();
