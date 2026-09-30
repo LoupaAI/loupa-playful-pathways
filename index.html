@@ -58,6 +58,7 @@
     
     
     
+    
     <link rel="apple-touch-icon" href="https://app.loupa.ai/loupa-favicon.png">
     <meta property="og:type" content="website">
     <meta property="og:image" content="https://app.loupa.ai/loupa-favicon.png">
@@ -1032,6 +1033,8 @@ svg text, svg textPath { fill: #000000 !important; color: #000000 !important; }
 
 
 
+
+
 <!-- LOUPA_ANALYTICS_START -->
 <script data-loupa-analytics>
 (function(){
@@ -1128,6 +1131,9 @@ svg text, svg textPath { fill: #000000 !important; color: #000000 !important; }
     var dec = (cached && cached.dec) || [];
     var server = (cached && cached.server) || null;
     var pending = false, seq = 0, timer = null, note = '', lastFocus = null, isOpen = false;
+    // Package choices (Upgrade Choice) are only a selection: nothing enters the cart
+    // and the header count stays unchanged until the buyer presses the buy button.
+    var stage = {};
 
     function curr(){ var m = P[C.main_id] || C.products[0]; return (server && server.currency) || (m && m.currency) || 'USD'; }
     function hasMain(s){ for (var id in s) if (P[id] && P[id].role === 'main') return true; return false; }
@@ -1200,6 +1206,17 @@ svg text, svg textPath { fill: #000000 !important; color: #000000 !important; }
     function setUpsell(on){
       if (!C.upsell_id) return;
       setOffer(C.upsell_id, on);
+    }
+    // Moves a pending package choice into the cart when the buyer presses the buy button.
+    function commitStage(){
+      var ids = []; for (var sid in stage) if (stage[sid] && P[sid] && P[sid].role === 'upsell') ids.push(sid);
+      stage = {};
+      if (!ids.length) return false;
+      mutate(function(){
+        ids.forEach(function(id){ if (!sel[id]) src[id] = 'featured_product'; sel[id] = 1; });
+        if (C.main_id && !sel[C.main_id]) sel[C.main_id] = 1;
+      });
+      return true;
     }
     function addProduct(id, source){
       var p = P[id]; if (!p || p.role === 'freebie') return;
@@ -1439,10 +1456,13 @@ svg text, svg textPath { fill: #000000 !important; color: #000000 !important; }
       var btn = document.createElement('button');
       btn.type = 'button'; btn.className = 'lc-header-btn'; btn.setAttribute('data-loupa-cart-open', '');
       btn.innerHTML = ic(I.bag, 20) + '<span class="lc-badge" data-lc-badge></span>';
-      var header = document.querySelector('header nav') || document.querySelector('header') || document.querySelector('nav');
+      var header = document.querySelector('header') || document.querySelector('nav');
       if (header) {
-        var inner = header.querySelector(':scope > div:last-child') || header;
-        (inner.children.length && inner !== header ? inner : header).appendChild(btn);
+        // Always sit at the far right of the header, after the header's own call to action.
+        var ctas = Array.prototype.filter.call(header.querySelectorAll('a,button'), function(el){ return !el.hasAttribute('data-loupa-cart-open'); });
+        var last = ctas[ctas.length - 1];
+        if (last && last.parentElement) last.insertAdjacentElement('afterend', btn);
+        else (header.querySelector(':scope > nav') || header).appendChild(btn);
       } else { btn.classList.add('lc-header-float'); document.body.appendChild(btn); }
     }
 
@@ -1451,7 +1471,8 @@ svg text, svg textPath { fill: #000000 !important; color: #000000 !important; }
     var CART_OPEN_RE = /^(cart|warenkorb|view cart|open cart)$/i;
     function paintSelectors(){
       Array.prototype.forEach.call(document.querySelectorAll('[data-lc-upsell-selector]'), function(w){
-        var id = w.getAttribute('data-lc-product'), on = !!sel[id];
+        var id = w.getAttribute('data-lc-product');
+        var on = w.getAttribute('data-lc-template') === 'upgrade_choice' ? (!!sel[id] || !!stage[id]) : !!sel[id];
         var cb = w.querySelector('input'); if (cb) cb.checked = on; w.classList.toggle('is-on', on);
         var added = w.querySelector('[data-lc-added-label]'); if (added) added.textContent = on ? (added.getAttribute('data-added') || 'Added ✓') : (added.getAttribute('data-add') || 'Add to my order');
         Array.prototype.forEach.call(w.querySelectorAll('[data-state]'), function(option){ option.classList.toggle('is-selected', option.getAttribute('data-state') === (on ? 'on' : 'off')); });
@@ -1510,11 +1531,35 @@ svg text, svg textPath { fill: #000000 !important; color: #000000 !important; }
         var featured = ctas.filter(function(el){ return el.closest('[id*="product" i],[class*="featured" i],[id*="featured" i],[class*="product" i]'); });
         anchor = featured[0] || ctas[0]; if (!anchor) return;
       }
-      var wrap = document.createElement('div'); wrap.className = 'lc-featured-offers'; wrap.innerHTML = offers.map(renderFeaturedOffer).join('');
-      wrap.addEventListener('change', function(e){ var w = e.target.closest('[data-lc-upsell-selector]'); if (w) setOffer(w.getAttribute('data-lc-product'), e.target.checked); });
-      wrap.addEventListener('click', function(e){ var b = e.target.closest('[data-lc-offer-toggle]'); if (!b) return; e.preventDefault(); var id = b.getAttribute('data-lc-offer-toggle'), state = b.getAttribute('data-state'); setOffer(id, state ? state === 'on' : !sel[id]); });
+      function isUpgrade(o){ return (o.design_template || 'checkbox_bump') === 'upgrade_choice'; }
+      function buildWrap(list){
+        var wrap = document.createElement('div'); wrap.className = 'lc-featured-offers'; wrap.innerHTML = list.map(renderFeaturedOffer).join('');
+        wrap.addEventListener('change', function(e){ var w = e.target.closest('[data-lc-upsell-selector]'); if (w) setOffer(w.getAttribute('data-lc-product'), e.target.checked); });
+        wrap.addEventListener('click', function(e){
+          var b = e.target.closest('[data-lc-offer-toggle]'); if (!b) return; e.preventDefault();
+          var id = b.getAttribute('data-lc-offer-toggle'), state = b.getAttribute('data-state');
+          var w = b.closest('[data-lc-upsell-selector]');
+          if (w && w.getAttribute('data-lc-template') === 'upgrade_choice') {
+            var wants = state ? state === 'on' : !(sel[id] || stage[id]);
+            if (sel[id] && !wants) { stage[id] = false; setOffer(id, false); }
+            else { stage[id] = wants; if (sel[id] && wants) { paintSelectors(); return; } }
+            paintSelectors();
+            return;
+          }
+          setOffer(id, state ? state === 'on' : !sel[id]);
+        });
+        return wrap;
+      }
       var hasFreebie = (C.offers || []).some(function(o){ return o.type === 'freebie' && (!o.main_product_id || o.main_product_id === C.main_id); });
-      if (slot) slot.appendChild(wrap); else anchor.insertAdjacentElement(hasFreebie ? 'afterend' : 'beforebegin', wrap);
+      // Upgrade Choice is a package picker, so it always sits above the buy button.
+      var upgrades = offers.filter(isUpgrade), rest = offers.filter(function(o){ return !isUpgrade(o); });
+      if (slot) {
+        if (upgrades.length) slot.appendChild(buildWrap(upgrades));
+        if (rest.length) slot.appendChild(buildWrap(rest));
+      } else {
+        if (upgrades.length) anchor.insertAdjacentElement('beforebegin', buildWrap(upgrades));
+        if (rest.length) anchor.insertAdjacentElement(hasFreebie ? 'afterend' : 'beforebegin', buildWrap(rest));
+      }
       paintSelectors();
     }
 
@@ -1537,7 +1582,7 @@ svg text, svg textPath { fill: #000000 !important; color: #000000 !important; }
       if (kind === 'cart-open') { open(); refresh(); return; }
       open();
       if (kind === 'upsell') setUpsell(true);
-      else { var pid = el.getAttribute('data-loupa-product'); if (pid && P[pid]) addProduct(pid, P[pid].role === 'upsell' ? 'featured_product' : null); else addMain(); }
+      else { var pid = el.getAttribute('data-loupa-product'); if (pid && P[pid]) addProduct(pid, P[pid].role === 'upsell' ? 'featured_product' : null); else { commitStage(); addMain(); paintSelectors(); } }
     }, true);
 
     // ---------- styles ----------
