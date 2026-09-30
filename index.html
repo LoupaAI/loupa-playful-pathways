@@ -60,6 +60,7 @@
     
     
     
+    
     <link rel="apple-touch-icon" href="https://app.loupa.ai/loupa-favicon.png">
     <meta property="og:type" content="website">
     <meta property="og:image" content="https://app.loupa.ai/loupa-favicon.png">
@@ -1038,6 +1039,8 @@ svg text, svg textPath { fill: #000000 !important; color: #000000 !important; }
 
 
 
+
+
 <!-- LOUPA_ANALYTICS_START -->
 <script data-loupa-analytics>
 (function(){
@@ -1454,19 +1457,34 @@ svg text, svg textPath { fill: #000000 !important; color: #000000 !important; }
       Array.prototype.forEach.call(document.querySelectorAll('[data-lc-badge]'), function(b){ b.textContent = n; b.style.display = n ? '' : 'none'; });
       Array.prototype.forEach.call(document.querySelectorAll('[data-loupa-cart-open]'), function(b){ b.setAttribute('aria-label', 'Open cart, ' + n + ' item' + (n === 1 ? '' : 's')); });
     }
+    // Global storefront element: every published page with a header gets it.
     function mountHeaderIcon(){
-      if (document.querySelector('[data-loupa-cart-open]')) { Array.prototype.forEach.call(document.querySelectorAll('[data-loupa-cart-open]'), function(b){ if (!b.querySelector('[data-lc-badge]')) { b.style.position = b.style.position || 'relative'; b.insertAdjacentHTML('beforeend', '<span class="lc-badge" data-lc-badge></span>'); } }); return; }
+      var existing = document.querySelectorAll('[data-loupa-cart-open]');
+      if (existing.length) {
+        Array.prototype.forEach.call(existing, function(b){ if (!b.querySelector('[data-lc-badge]')) { b.style.position = b.style.position || 'relative'; b.insertAdjacentHTML('beforeend', '<span class="lc-badge" data-lc-badge></span>'); } });
+        paintBadges();
+        return;
+      }
       var btn = document.createElement('button');
       btn.type = 'button'; btn.className = 'lc-header-btn'; btn.setAttribute('data-loupa-cart-open', '');
+      btn.setAttribute('aria-label', 'Open cart');
+      btn.style.flex = '0 0 auto';
       btn.innerHTML = ic(I.bag, 20) + '<span class="lc-badge" data-lc-badge></span>';
-      var header = document.querySelector('header') || document.querySelector('nav');
+      var header = document.querySelector('header') || document.querySelector('[data-loupa-brand-header]') || document.querySelector('nav');
       if (header) {
         // Always sit at the far right of the header, after the header's own call to action.
         var ctas = Array.prototype.filter.call(header.querySelectorAll('a,button'), function(el){ return !el.hasAttribute('data-loupa-cart-open'); });
         var last = ctas[ctas.length - 1];
-        if (last && last.parentElement) last.insertAdjacentElement('afterend', btn);
-        else (header.querySelector(':scope > nav') || header).appendChild(btn);
+        // Prefer a direct child of the header so flex layouts keep it last.
+        while (last && last.parentElement && last.parentElement !== header) last = last.parentElement;
+        if (last && last.parentElement === header) last.insertAdjacentElement('afterend', btn);
+        else header.appendChild(btn);
       } else { btn.classList.add('lc-header-float'); document.body.appendChild(btn); }
+      paintBadges();
+    }
+    // Headers rendered late (fonts, hydration, editor scripts) still get the icon.
+    function ensureHeaderIcon(){
+      try { if (!document.querySelector('[data-loupa-cart-open]')) mountHeaderIcon(); else paintBadges(); } catch (e) {}
     }
 
     // ---------- Featured Product offers ----------
@@ -1520,6 +1538,21 @@ svg text, svg textPath { fill: #000000 !important; color: #000000 !important; }
       }
       return '<label class="lc-fo lc-fo-checkbox"' + common + ' style="--fo-frame:' + offerCss(o,'frameBg','#FFFDF7') + ';--fo-border:' + offerCss(o,'frameBorder','#E0913A') + ';--fo-header:' + offerCss(o,'headerBg','#FFF1D6') + ';--fo-header-text:' + offerCss(o,'headerText','#111111') + ';--fo-accent:' + offerCss(o,'accent','#E0913A') + ';--fo-title:' + offerCss(o,'title','#111111') + ';--fo-pitch:' + offerCss(o,'pitch','#555555') + ';--fo-badge:' + offerCss(o,'badgeBg','#E0913A') + ';--fo-badge-text:' + offerCss(o,'badgeText','#FFFFFF') + ';--fo-price:' + offerCss(o,'price','#111111') + ';--fo-original:' + offerCss(o,'original','#9D9D9D') + ';--fo-radius:' + offerRadius(o,12,22) + '"><span class="lc-fo-checkline">' + (bool(c,'showArrow',true) ? '→' : '') + '<input type="checkbox"' + (on ? ' checked' : '') + '><b>' + tokens(val(c,'headline','Yes, add this to my order'),o,price) + '</b></span><span class="lc-fo-row">' + (bool(c,'showImage',true) ? offerImage(up,64,offerRadius(o,8,16)) : '') + '<span class="lc-fo-copy"><b>' + tokens(val(c,'title','{upsell product}'),o,price) + '</b><small>' + tokens(val(c,'pitch','Only available with this order.'),o,price) + '</small></span><span class="lc-fo-price">' + (off ? '<mark>' + tokens(val(c,'discountLabel','−{discount}'),o,price) + '</mark>' : '') + '<strong>' + money(price,up.currency) + '</strong>' + (off && bool(c,'showOriginalPrice',true) ? '<s>' + money(up.price_cents,up.currency) + '</s>' : '') + '</span></span></label>';
     }
+    // Structural lookup for the Featured Product component. Never text based:
+    // a "Buy now" label elsewhere on the page must not attract offer UI.
+    var FEATURED_SEL = '[data-loupa-featured-product],[data-loupa-section-key*="featured-product" i],[data-loupa-section-id*="featured-product" i],[data-loupa-section-key*="product-detail" i],[data-loupa-section-id*="product-detail" i],[data-component-id*="featured-product" i],section[id*="featured-product" i],section[class*="featured-product" i]';
+    function featuredProductBlock(){
+      var nodes = Array.prototype.filter.call(document.querySelectorAll(FEATURED_SEL), function(el){
+        return !el.closest('header,nav,footer,[data-loupa-cart-root]');
+      });
+      for (var i = 0; i < nodes.length; i++) {
+        var has = Array.prototype.some.call(nodes[i].querySelectorAll('a,button'), function(el){
+          return classify(el) === 'main' && !el.closest('header,nav,footer,[data-loupa-cart-root]');
+        });
+        if (has) return nodes[i];
+      }
+      return null;
+    }
     function mountUpsellSelector(){
       var seen = {};
       var offers = (C.offers || []).filter(function(o){
@@ -1530,9 +1563,13 @@ svg text, svg textPath { fill: #000000 !important; color: #000000 !important; }
       if (!offers.length) return;
       var slot = document.querySelector('[data-loupa-upsell-slot]'), anchor = null;
       if (!slot) {
-        var ctas = Array.prototype.filter.call(document.querySelectorAll('a,button'), function(el){ return classify(el) === 'main' && !el.closest('header,nav,footer,[data-loupa-cart-root]'); });
-        var featured = ctas.filter(function(el){ return el.closest('[id*="product" i],[class*="featured" i],[id*="featured" i],[class*="product" i]'); });
-        anchor = featured[0] || ctas[0]; if (!anchor) return;
+        // Offers belong to the Featured Product block only. Never fall back to
+        // a header/hero/footer CTA just because its label looks like "Buy now".
+        var block = featuredProductBlock(); if (!block) return;
+        var ctas = Array.prototype.filter.call(block.querySelectorAll('a,button'), function(el){
+          return classify(el) === 'main' && !el.closest('header,nav,footer,[data-loupa-cart-root],[data-lc-upsell-selector]');
+        });
+        anchor = ctas[0]; if (!anchor) return;
       }
       function isUpgrade(o){ return (o.design_template || 'checkbox_bump') === 'upgrade_choice'; }
       function buildWrap(list){
@@ -1617,7 +1654,13 @@ svg text, svg textPath { fill: #000000 !important; color: #000000 !important; }
       doc.style.setProperty('--lc-title-color', A.match_website_theme && A.website_theme ? K.title : T.title_color || K.title || K.text); doc.style.setProperty('--lc-product-size', (T.product_size || 14) + 'px'); doc.style.setProperty('--lc-product-weight', String(T.product_weight || 600)); doc.style.setProperty('--lc-product-color', A.match_website_theme && A.website_theme ? K.product_name : T.product_color || K.product_name || K.text); doc.style.setProperty('--lc-small-size', (T.small_size || 12) + 'px'); doc.style.setProperty('--lc-small-weight', String(T.small_weight || 400)); doc.style.setProperty('--lc-small-color', A.match_website_theme && A.website_theme ? K.muted_text : T.small_color || K.muted_text);
       if (A.use_website_font) doc.style.setProperty('--lc-font', getComputedStyle(document.body).fontFamily); else doc.style.setProperty('--lc-font', 'Inter,system-ui,sans-serif');
     }
-    function init(){ applyAppearance(); mountHeaderIcon(); mountUpsellSelector(); paint(); }
+    function mountOffersOnce(){ if (!document.querySelector('[data-lc-upsell-selector]')) mountUpsellSelector(); }
+    function init(){
+      applyAppearance(); mountHeaderIcon(); mountUpsellSelector(); paint();
+      // Late-rendered headers / featured blocks are picked up without a reload.
+      window.addEventListener('load', function(){ ensureHeaderIcon(); mountOffersOnce(); paint(); });
+      var tries = 0, t = setInterval(function(){ tries++; ensureHeaderIcon(); mountOffersOnce(); if (tries > 9) clearInterval(t); }, 400);
+    }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
     // Quiet background prefetch so the first open shows validated state.
     if (cartId()) setTimeout(refresh, 400);
