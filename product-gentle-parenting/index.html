@@ -49,6 +49,7 @@
     
     
     
+    
     <link rel="apple-touch-icon" href="https://app.loupa.ai/loupa-favicon.png">
     <meta property="og:type" content="website">
     <meta property="og:image" content="https://app.loupa.ai/loupa-favicon.png">
@@ -1038,6 +1039,8 @@ svg text, svg textPath { fill: #000000 !important; color: #000000 !important; }
 
 
 
+
+
 <!-- LOUPA_ANALYTICS_START -->
 <script data-loupa-analytics>
 (function(){
@@ -1195,12 +1198,16 @@ svg text, svg textPath { fill: #000000 !important; color: #000000 !important; }
             ? '<span style="margin-left:6px;color:#9A9A9A;text-decoration:line-through">' + money(i.base_price_cents * i.quantity, state.currency) + '</span>' : '';
           var tag = i.role === 'upsell' ? '#E0913A' : i.role === 'freebie' ? '#9B6BE0' : '#4F6BED';
           var remove = i.is_freebie ? '' : '<button data-lc-remove="' + i.product_id + '" style="border:0;background:none;color:#9A9A9A;font-size:12px;cursor:pointer;padding:0">Remove</button>';
+          var cover = i.cover_url
+            ? '<img src="' + String(i.cover_url).replace(/"/g, '&quot;') + '" alt="" style="width:48px;height:48px;border-radius:8px;object-fit:cover;flex:0 0 48px;background:#F4F4F4">'
+            : '<span style="width:48px;height:48px;border-radius:8px;flex:0 0 48px;background:#F4F4F4;display:inline-block"></span>';
           return '<div style="display:flex;gap:12px;justify-content:space-between;padding:12px 0;border-bottom:1px solid #F4F4F4">'
+            + '<div style="display:flex;gap:10px;min-width:0">' + cover
             + '<div style="min-width:0"><p style="margin:0;font-size:13px;font-weight:500">' + i.title + '</p>'
             + '<p style="margin:4px 0 0;font-size:11px;color:#6B6B6B;display:flex;align-items:center;gap:6px">'
             + '<span style="width:6px;height:6px;border-radius:2px;background:' + tag + ';display:inline-block"></span>'
             + (i.role === 'freebie' ? 'Free bonus' : i.role === 'upsell' ? 'Add-on' : 'Main product') + '</p>'
-            + '<div style="margin-top:6px">' + remove + '</div></div>'
+            + '<div style="margin-top:6px">' + remove + '</div></div></div>'
             + '<div style="font-size:13px;white-space:nowrap">' + price + was + '</div></div>';
         }).join('');
         Array.prototype.forEach.call(listEl.querySelectorAll('[data-lc-remove]'), function(btn){
